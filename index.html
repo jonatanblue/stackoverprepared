@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script type='text/javascript'>
+    function handleKeyPress(event) {
+      if (event.keyCode === 13) {
+        getData();
+      }
+    }
+    // Credits:
+    // https://stackapps.com/questions/2/api-hello-world-code/7236#7236
+    //
+    function getData() {
+      let tag,
+          url,
+          site;
+      tag = document.getElementById("tag").value;
+      site = document.getElementById("siteName").value;
+      url = 'https://api.stackexchange.com/2.2/questions?pagesize=5&order=desc&sort=votes&tagged=' + tag + '&site=' + site;
+      fetch (
+          url
+      )
+      .then (function (response) {
+          // Check for error in response
+          if (response.ok) {
+              return response.json();
+          }
+          throw new Error (`API problem: Error ${response.status}, ${response.statusText}`);
+      })
+      .then (function (json) {
+          // Check the backoff value
+          // TODO: Instead of throwing an error, wait json.backoff seconds before retrying
+          if (json.backoff  ||  json.error_id) {
+              throw new Error (`From API: Backoff ${json.backoff}, Error: ${json.error_id}, ${json.error_message}, ${json.error_name}`);
+          }
+          console.log (`Quota remaining: ${json.quota_remaining}; Items found: ${json.items.length}`);
+      
+          let allQuestions = json.items,
+              showText = "",
+              line = "",
+              index = 0;
+          for (let question of allQuestions) {
+              index++;
+              line = "<p>"+ index + ". " + "<a href='" + question.link + "' target=_blank>" + question.title + "</a></p>";
+              // Append to full text
+              showText = showText + line;
+          }
+          document.getElementById("questions").innerHTML = showText;
+      });
+    }
+    </script>
+  </head>
+  <body>
+    <form action="#">
+      Select a site: <select id="siteName">
+          <option value="stackoverflow" selected>Stack Overflow</option>
+          <option value="serverfault">Serverfault</option>
+      </select><br>
+      Type tag name here: <input id="tag" onkeypress="handleKeyPress(event)"></input>
+      <button id="show-button" onClick="getData()">Learn</button>
+    </form>
+    <div id="questions"></div>
+  </body>
+</html>
