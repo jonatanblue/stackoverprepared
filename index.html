@@ -48,7 +48,7 @@
               showText = showText + line;
           }
           
-          if (json.quota_remaining < 295) {
+          if (json.quota_remaining < 100) {
               document.getElementById("quota-warning").innerHTML = "<p>Slow down! You're nearly out of quota. Requests remaining today: " + json.quota_remaining + "</p>";
           }
           document.getElementById("questions").innerHTML = showText;
