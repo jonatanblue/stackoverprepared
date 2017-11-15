@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <script type='text/javascript'>
     function handleKeyPress(event) {
+    // Trigger data fetch on Enter keypress
       if (event.keyCode === 13) {
         getData();
       }
@@ -46,6 +47,10 @@
               // Append to full text
               showText = showText + line;
           }
+          
+          if (json.quota_remaining < 295) {
+              document.getElementById("quota-warning").innerHTML = "<p>Slow down! You're nearly out of quota. Requests remaining today: " + json.quota_remaining + "</p>";
+          }
           document.getElementById("questions").innerHTML = showText;
       });
     }
@@ -61,5 +66,6 @@
       <button id="show-button" onClick="getData()">Learn</button>
     </form>
     <div id="questions"></div>
+    <div id="quota-warning"></div>
   </body>
 </html>
